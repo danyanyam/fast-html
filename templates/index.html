@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Сентиметрика</title>
+	<!-- <link rel="stylesheet" href="css/main.css"> -->
+	<!-- <script src="js/script.js"></script> -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+	<script src="{{url_for('static', filename='js/script.js')}}"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,900;1,700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&family=Source+Sans+Pro:wght@200&display=swap" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+	<script src="https://kit.fontawesome.com/9ffe131f80.js" crossorigin="anonymous"></script>
+</head>
+
+<body onload="Remover();">
+	
+	<section>
+		
+		<br>
+		<icon class="fas fa-calculator fa-2x" style="display: inline-block; margin-left: 20px;"></icon><h1 style="display: inline-block;">Портфель на </h1> <b><i><div id="timer"></div></i></b><br>
+		<p style="display: inline; color:grey; font-size: 12px; text-decoration: underline; margin-left: 100px;">Последний раз обновлено</p> <p id="update">{{ data.first_section.update_date }}</p>
+
+		<br>
+		<br>
+		<hr>
+		<script>get_date();</script>
+		<div class="charecteristics">
+
+			<div class="data-block">
+				<span class="title-char-table">Совокупная доходность:</span><br>
+				
+					<table>
+						<tr class="char-row">
+							<td class="char-cell"><span>Доходность за день</span></td>
+							<td class="char-cell"><span class="number">{{ data.first_section.daily_yield }}</span></td>
+						</tr>
+						<tr class="char-row">
+							<td class="char-cell"><span>Доходность за неделю</span></td>
+							<td class="char-cell"><span class="number">{{ data.first_section.weekly_yield }}</span></td>
+						</tr>
+						<tr class="char-row">
+							<td class="char-cell"><span>Доходность за месяц</span></td>
+							<td class="char-cell"><span class="number">{{ data.first_section.monthly_yield }}</span></td>
+						</tr>
+						<tr class="char-row">
+							<td class="char-cell"><span>Накопленная доходность</span></td>
+							<td class="char-cell"><span class="number">{{ data.first_section.cumulated_yield }}</span></td>
+						</tr>
+
+					</table>
+			</div>
+			<div class="data-block">
+				<span class="title-char-table">Количество бумаг по ликвидности:</span><br>
+					<table>
+						<tr class="char-row">
+							<td class="char-cell"><span >Доля высоколиквидных</span></td>
+							<td class="char-cell"><span class="coef">{{ data.first_section.highly_liquid_share }}</span></td>
+						</tr>
+						<tr class="char-row">
+							<td class="char-cell"><span>Доля среднеликвидных</span></td>
+							<td class="char-cell"><span class="coef">{{ data.first_section.medium_liquid_share }}</span></td>
+						</tr>
+						<tr class="char-row">
+							<td class="char-cell"><span>Доля низколиквидных</span></td>
+							<td class="char-cell"><span class="coef">{{ data.first_section.low_liquid_share }}</span></td>
+						</tr>
+
+					</table>
+			</div>
+			<div class="data-block">
+				<span class="title-char-table">Количественные характеристики:</span><br>
+					<table>
+						<tr class="char-row">
+							<td class="char-cell"><span>Коэффициент Шарпа</span></td>
+							<td class="char-cell"><span class="coef">{{ data.first_section.sharpe_coeff }}</span></td>
+						</tr>
+
+						<tr class="char-row">
+							<td class="char-cell"><span>Максимальная просадка</span></td>
+							<td class="char-cell"><span class="coef">{{ data.first_section.maximum_drawdown }}</span></td>
+						</tr>
+
+					</table>
+			</div>
+			<div class="data-block">
+				<span class="title-char-table">Общее состояние по рынку:</span><br>
+					<table>
+						<tr class="char-row">
+							<td class="char-cell"><span>Доля позитивных сообщений</span></td>
+							<td class="char-cell"><span class="coef">{{ data.first_section.positive_rate }}</span></td>
+						</tr>
+						<tr class="char-row">
+							<td class="char-cell"><span>Доля нейтральных сообщений</span></td>
+							<td class="char-cell"><span class="coef">{{ data.first_section.neutral_rate }}</span></td>
+						</tr>
+						<tr class="char-row">
+							<td class="char-cell"><span>Доля негативных сообщений</span></td>
+							<td class="char-cell"><span class="coef">{{ data.first_section.negative_rate }}</span></td>
+						</tr>
+						<tr class="char-row">
+							<td class="char-cell"><span>Дивергениция мнений</span></td>
+							<td class="char-cell"><span class="coef">{{ data.first_section.divirgation_rate }}</span></td>
+						</tr>
+
+
+					</table>
+			</div>
+		</div>
+		<script>change_number_color("number");</script>
+		<div class="portfel-section">
+			<table cellspacing="0">
+				{% for i in data.second_section.first_ten: %}
+				<tr class="main-table">
+					<td class="ticker" title="Тикер бумаги">{{ i.name }}</td>
+					<td class="weight" title="Вес бумаги в портфеле">{{ i.share }}</td>
+					<td class="volume" title="Объемы торгов">{{ i.volume }}</td>
+					<td class="price" title="Стоимость бумаги">{{ i.price }}</td>
+					<td class="yield" title="Изменение в стоимости бумаги к предыдущему периоду">{{ i.change }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+			<table cellspacing="0">
+				{% for i in data.second_section.second_ten: %}
+				<tr class="main-table">
+					<td class="ticker" title="Тикер бумаги">{{ i.name }}</td>
+					<td class="weight" title="Вес бумаги в портфеле">{{ i.share }}</td>
+					<td class="volume" title="Объемы торгов">{{ i.volume }}</td>
+					<td class="price" title="Стоимость бумаги">{{ i.price }}</td>
+					<td class="yield" title="Изменение в стоимости бумаги к предыдущему периоду">{{ i.change }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+
+		<script>change_yield_color("yield");</script>
+	</section>
+
+	<!-- Статистики портфеля -->
+
+
+	<section>
+		<icon class="fas fa-calendar-alt fa-2x" style="display: inline-block; margin-left: 20px;"></icon><h1 style="display: inline-block;">Доходность портфеля во времени</h1> 
+		<hr>
+		<div class="chart-section" style="display: inline-block; width: 100%; height: 300px; text-align: center; margin: 0 auto;">
+			<div class="chart-container">
+			  <canvas id="portfolio-value-week" width="250" height="200"></canvas>
+			</div>
+			 <div class="chart-container">
+			  <canvas id="portfolio-value-month" width="250" height="200"></canvas>
+			</div>
+			 <div class="chart-container">
+			  <canvas id="portfolio-value-year" width="250" height="200"></canvas>
+			</div>
+			
+			{% for i in data.third_section %}
+				<script class="trash">get_value_of_portfolio("{{ i.id_of_tag }}", "{{ i.title }}", "{{ i.data }}", "{{ i.labels|safe}}", "{{ i.gradient_1 }}", "{{ i.gradient_2}}");</script>
+			{% endfor %}
+		</div>
+	</section>
+
+	<section>
+		<icon class="fas fa-comments fa-2x" style="display: inline-block; margin-left: 20px;"></icon><h1 style="display: inline-block;">Комментарии</h1> 
+		<hr>
+		<p>В разработке</p>
+	</section>
+</body>
+
+</html>
